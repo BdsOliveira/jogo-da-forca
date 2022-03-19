@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Forca</title>
+</head>
+<body>
+   <div id="app">
+
+   </div>
+    <script type="text/javascript" src="lib/wordloader.js"></script>
+    <script type="text/javascript" src="lib/tests.js"></script>
+    <script type="text/javascript">
+        async function main(){
+            let player = new Player();
+            let wordGroupManager = new WordGroupManager(["abacate", "pera", "goiaba", "maca", "beterraba"]);
+            let roundManager = new RoundManager(wordGroupManager, player);
+            let currentWord = roundManager.next();
+
+            while (currentWord){
+
+                let attemptManager = new AttemptManager(currentWord);
+                while(!attemptManager.isComplete()){
+                    let inputData = window.prompt("Digite uma letra");
+                    if (inputData == "0") {
+                        return;
+                    }
+                    let qtyFound = attemptManager.guess(inputData);
+                    if (qtyFound != -1) {
+                        if (qtyFound == 0) {
+                            player.fail();
+                            if (!player.isAlive()) {
+                                return 1;
+                            }
+                        } else {
+                            player.hit(qtyFound);
+                        }
+                    }
+                    GameStatus.print(player, attemptManager);
+                }
+
+            currentWord = roundManager.next();
+            }
+        }
+        (main());
+    </script>
+</body>
+</html>
